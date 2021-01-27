@@ -18,11 +18,6 @@ func TestCauseStr(t *testing.T) {
 			want: "LocalDetach",
 		},
 		{
-			name: "QoSParameterMismatch",
-			cause: CauseQoSParameterMismatch,
-			want: "QoSParameterMismatch",
-		},
-		{
 			name: "RequestAccepted",
 			cause: CauseRequestAccepted,
 			want: "RequestAccepted",
