@@ -11,6 +11,7 @@ import (
 	"encoding/binary"
 	"fmt"
 	"io"
+	"strconv"
 )
 
 // IE definitions.
@@ -414,8 +415,9 @@ func (i *IE) SetLength() {
 
 // String returns the GTPv2 IE values in human readable format.
 func (i *IE) String() string {
-	return fmt.Sprintf("{Type: %d, Length: %d, Instance: %#x, Payload: %#v}",
+	return fmt.Sprintf("{Type: %d (%s), Length: %d, Instance: %#x, Payload: %#v}",
 		i.Type,
+		IETypeStr(i.Type),
 		i.Length,
 		i.Instance(),
 		i.Payload,
@@ -564,4 +566,305 @@ func newGroupedIE(itype uint8, ies ...*IE) *IE {
 	i.SetLength()
 
 	return i
+}
+
+// IETypeStr returns string representation of passed GTPv2 IE type
+func IETypeStr(ieType uint8) string {
+	typeStr := ""
+	switch ieType {
+	case IMSI:
+		typeStr = "IMSI"
+	case Cause:
+		typeStr = "Cause"
+	case Recovery:
+		typeStr = "Recovery"
+	// 4-34: Reserved for S101 interface
+	// 35-50:  Reserved for S101 interface
+	case STNSR:
+		typeStr = "STNSR"
+	// 52-70: Reserved for Sv interface
+	case AccessPointName:
+		typeStr = "AccessPointName"
+	case AggregateMaximumBitRate:
+		typeStr = "AggregateMaximumBitRate"
+	case EPSBearerID:
+		typeStr = "EPSBearerID"
+	case IPAddress:
+		typeStr = "IPAddress"
+	case MobileEquipmentIdentity:
+		typeStr = "MobileEquipmentIdentity"
+	case MSISDN:
+		typeStr = "MSISDN"
+	case Indication:
+		typeStr = "Indication"
+	case ProtocolConfigurationOptions:
+		typeStr = "ProtocolConfigurationOptions"
+	case PDNAddressAllocation:
+		typeStr = "PDNAddressAllocation"
+	case BearerQoS:
+		typeStr = "BearerQoS"
+	case FlowQoS:
+		typeStr = "FlowQoS"
+	case RATType:
+		typeStr = "RATType"
+	case ServingNetwork:
+		typeStr = "ServingNetwork"
+	case BearerTFT:
+		typeStr = "BearerTFT"
+	case TrafficAggregateDescription:
+		typeStr = "TrafficAggregateDescription"
+	case UserLocationInformation:
+		typeStr = "UserLocationInformation"
+	case FullyQualifiedTEID:
+		typeStr = "FullyQualifiedTEID"
+	case TMSI:
+		typeStr = "TMSI"
+	case GlobalCNID:
+		typeStr = "GlobalCNID"
+	case S103PDNDataForwardingInfo:
+		typeStr = "S103PDNDataForwardingInfo"
+	case S1UDataForwarding:
+		typeStr = "S1UDataForwarding"
+	case DelayValue:
+		typeStr = "DelayValue"
+	case BearerContext:
+		typeStr = "BearerContext"
+	case ChargingID:
+		typeStr = "ChargingID"
+	case ChargingCharacteristics:
+		typeStr = "ChargingCharacteristics"
+	case TraceInformation:
+		typeStr = "TraceInformation"
+	case BearerFlags:
+		typeStr = "BearerFlags"
+	case PDNType:
+		typeStr = "PDNType"
+	case ProcedureTransactionID:
+		typeStr = "ProcedureTransactionID"
+	case MMContextGSMKeyAndTriplets:
+		typeStr = "MMContextGSMKeyAndTriplets"
+	case MMContextUMTSKeyUsedCipherAndQuintuplets:
+		typeStr = "MMContextUMTSKeyUsedCipherAndQuintuplets"
+	case MMContextGSMKeyUsedCipherAndQuintuplets:
+		typeStr = "MMContextGSMKeyUsedCipherAndQuintuplets"
+	case MMContextUMTSKeyAndQuintuplets:
+		typeStr = "MMContextUMTSKeyAndQuintuplets"
+	case MMContextEPSSecurityContextQuadrupletsAndQuintuplets:
+		typeStr = "MMContextEPSSecurityContextQuadrupletsAndQuintuplets"
+	case MMContextUMTSKeyQuadrupletsAndQuintuplets:
+		typeStr = "MMContextUMTSKeyQuadrupletsAndQuintuplets"
+	case PDNConnection:
+		typeStr = "PDNConnection"
+	case PDUNumbers:
+		typeStr = "PDUNumbers"
+	case PacketTMSI:
+		typeStr = "PacketTMSI"
+	case PTMSISignature:
+		typeStr = "PTMSISignature"
+	case HopCounter:
+		typeStr = "HopCounter"
+	case UETimeZone:
+		typeStr = "UETimeZone"
+	case TraceReference:
+		typeStr = "TraceReference"
+	case CompleteRequestMessage:
+		typeStr = "CompleteRequestMessage"
+	case GUTI:
+		typeStr = "GUTI"
+	case FContainer:
+		typeStr = "FContainer"
+	case FCause:
+		typeStr = "FCause"
+	case PLMNID:
+		typeStr = "PLMNID"
+	case TargetIdentification:
+		typeStr = "TargetIdentification"
+	case PacketFlowID:
+		typeStr = "PacketFlowID"
+	case RABContext:
+		typeStr = "RABContext"
+	case SourceRNCPDCPContextInfo:
+		typeStr = "SourceRNCPDCPContextInfo"
+	case PortNumber:
+		typeStr = "PortNumber"
+	case APNRestriction:
+		typeStr = "APNRestriction"
+	case SelectionMode:
+		typeStr = "SelectionMode"
+	case SourceIdentification:
+		typeStr = "SourceIdentification"
+	case Reserved:
+		typeStr = "Reserved"
+	case ChangeReportingAction:
+		typeStr = "ChangeReportingAction"
+	case FullyQualifiedCSID:
+		typeStr = "FullyQualifiedCSID"
+	case ChannelNeeded:
+		typeStr = "ChannelNeeded"
+	case EMLPPPriority:
+		typeStr = "EMLPPPriority"
+	case NodeType:
+		typeStr = "NodeType"
+	case FullyQualifiedDomainName:
+		typeStr = "FullyQualifiedDomainName"
+	case TI:
+		typeStr = "TI"
+	case MBMSSessionDuration:
+		typeStr = "MBMSSessionDuration"
+	case MBMSServiceArea:
+		typeStr = "MBMSServiceArea"
+	case MBMSSessionIdentifier:
+		typeStr = "MBMSSessionIdentifier"
+	case MBMSFlowIdentifier:
+		typeStr = "MBMSFlowIdentifier"
+	case MBMSIPMulticastDistribution:
+		typeStr = "MBMSIPMulticastDistribution"
+	case MBMSDistributionAcknowledge:
+		typeStr = "MBMSDistributionAcknowledge"
+	case RFSPIndex:
+		typeStr = "RFSPIndex"
+	case UserCSGInformation:
+		typeStr = "UserCSGInformation"
+	case CSGInformationReportingAction:
+		typeStr = "CSGInformationReportingAction"
+	case CSGID:
+		typeStr = "CSGID"
+	case CSGMembershipIndication:
+		typeStr = "CSGMembershipIndication"
+	case ServiceIndicator:
+		typeStr = "ServiceIndicator"
+	case DetachType:
+		typeStr = "DetachType"
+	case LocalDistinguishedName:
+		typeStr = "LocalDistinguishedName"
+	case NodeFeatures:
+		typeStr = "NodeFeatures"
+	case MBMSTimeToDataTransfer:
+		typeStr = "MBMSTimeToDataTransfer"
+	case Throttling:
+		typeStr = "Throttling"
+	case AllocationRetensionPriority:
+		typeStr = "AllocationRetensionPriority"
+	case EPCTimer:
+		typeStr = "EPCTimer"
+	case SignallingPriorityIndication:
+		typeStr = "SignallingPriorityIndication"
+	case TMGI:
+		typeStr = "TMGI"
+	case AdditionalMMContextForSRVCC:
+		typeStr = "AdditionalMMContextForSRVCC"
+	case AdditionalFlagsForSRVCC:
+		typeStr = "AdditionalFlagsForSRVCC"
+	case MDTConfiguration:
+		typeStr = "MDTConfiguration"
+	case AdditionalProtocolConfigurationOptions:
+		typeStr = "AdditionalProtocolConfigurationOptions"
+	case AbsoluteTimeofMBMSDataTransfer:
+		typeStr = "AbsoluteTimeofMBMSDataTransfer"
+	case HeNBInformationReporting:
+		typeStr = "HeNBInformationReporting"
+	case IPv4ConfigurationParameters:
+		typeStr = "IPv4ConfigurationParameters"
+	case ChangeToReportFlags:
+		typeStr = "ChangeToReportFlags"
+	case ActionIndication:
+		typeStr = "ActionIndication"
+	case TWANIdentifier:
+		typeStr = "TWANIdentifier"
+	case ULITimestamp:
+		typeStr = "ULITimestamp"
+	case MBMSFlags:
+		typeStr = "MBMSFlags"
+	case RANNASCause:
+		typeStr = "RANNASCause"
+	case CNOperatorSelectionEntity:
+		typeStr = "CNOperatorSelectionEntity"
+	case TrustedWLANModeIndication:
+		typeStr = "TrustedWLANModeIndication"
+	case NodeNumber:
+		typeStr = "NodeNumber"
+	case NodeIdentifier:
+		typeStr = "NodeIdentifier"
+	case PresenceReportingAreaAction:
+		typeStr = "PresenceReportingAreaAction"
+	case PresenceReportingAreaInformation:
+		typeStr = "PresenceReportingAreaInformation"
+	case TWANIdentifierTimestamp:
+		typeStr = "TWANIdentifierTimestamp"
+	case OverloadControlInformation:
+		typeStr = "OverloadControlInformation"
+	case LoadControlInformation:
+		typeStr = "LoadControlInformation"
+	case Metric:
+		typeStr = "Metric"
+	case SequenceNumber:
+		typeStr = "SequenceNumber"
+	case APNAndRelativeCapacity:
+		typeStr = "APNAndRelativeCapacity"
+	case WLANOffloadabilityIndication:
+		typeStr = "WLANOffloadabilityIndication"
+	case PagingAndServiceInformation:
+		typeStr = "PagingAndServiceInformation"
+	case IntegerNumber:
+		typeStr = "IntegerNumber"
+	case MillisecondTimeStamp:
+		typeStr = "MillisecondTimeStamp"
+	case MonitoringEventInformation:
+		typeStr = "MonitoringEventInformation"
+	case ECGIList:
+		typeStr = "ECGIList"
+	case RemoteUEContext:
+		typeStr = "RemoteUEContext"
+	case RemoteUserID:
+		typeStr = "RemoteUserID"
+	case RemoteUEIPinformation:
+		typeStr = "RemoteUEIPinformation"
+	case CIoTOptimizationsSupportIndication:
+		typeStr = "CIoTOptimizationsSupportIndication"
+	case SCEFPDNConnection:
+		typeStr = "SCEFPDNConnection"
+	case HeaderCompressionConfiguration:
+		typeStr = "HeaderCompressionConfiguration"
+	case ExtendedProtocolConfigurationOptions:
+		typeStr = "ExtendedProtocolConfigurationOptions"
+	case ServingPLMNRateControl:
+		typeStr = "ServingPLMNRateControl"
+	case Counter:
+		typeStr = "Counter"
+	case MappedUEUsageType:
+		typeStr = "MappedUEUsageType"
+	case SecondaryRATUsageDataReport:
+		typeStr = "SecondaryRATUsageDataReport"
+	case UPFunctionSelectionIndicationFlags:
+		typeStr = "UPFunctionSelectionIndicationFlags"
+	case MaximumPacketLossRate:
+		typeStr = "MaximumPacketLossRate"
+	case APNRateControlStatus:
+		typeStr = "APNRateControlStatus"
+	case ExtendedTraceInformation:
+		typeStr = "ExtendedTraceInformation"
+	case MonitoringEventExtensionInformation:
+		typeStr = "MonitoringEventExtensionInformation"
+	case AdditionalRRMPolicyIndex:
+		typeStr = "AdditionalRRMPolicyIndex"
+	case V2XContext:
+		typeStr = "V2XContext"
+	case PC5QoSParameters:
+		typeStr = "PC5QoSParameters"
+	case ServicesAuthorized:
+		typeStr = "ServicesAuthorized"
+	case BitRate:
+		typeStr = "BitRate"
+	case PC5QoSFlow:
+		typeStr = "PC5QoSFlow"
+	// 206-253: Spare for future use
+	// 206-253: Spare for future use
+	case SpecialIETypeForIETypeExtension:
+		typeStr = "SpecialIETypeForIETypeExtension"
+	case PrivateExtension:
+		typeStr = "PrivateExtension"
+	default:
+		typeStr = strconv.FormatUint(uint64(ieType), 10)
+	}
+	return typeStr
 }
