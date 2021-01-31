@@ -8,34 +8,34 @@ import "testing"
 
 func TestCauseStr(t *testing.T) {
 	tests := []struct {
-		name string
+		name  string
 		cause uint8
-		want string
-	} {
+		want  string
+	}{
 		{
-			name: "QoSParameterMismatch",
+			name:  "QoSParameterMismatch",
 			cause: ReqCauseQoSParameterMismatch,
-			want: "QoSParameterMismatch",
+			want:  "QoSParameterMismatch",
 		},
 		{
-			name: "RequestAccepted",
+			name:  "RequestAccepted",
 			cause: ResCauseRequestAccepted,
-			want: "RequestAccepted",
+			want:  "RequestAccepted",
 		},
 		{
-			name: "NonExistent",
+			name:  "NonExistent",
 			cause: ResCauseNonExistent,
-			want: "NonExistent",
+			want:  "NonExistent",
 		},
 		{
-			name: "APNRestrictionTypeIncompatibilityWithCurrentlyActivePDPContexts",
+			name:  "APNRestrictionTypeIncompatibilityWithCurrentlyActivePDPContexts",
 			cause: ResCauseAPNRestrictionTypeIncompatibilityWithCurrentlyActivePDPContexts,
-			want: "APNRestrictionTypeIncompatibilityWithCurrentlyActivePDPContexts",
+			want:  "APNRestrictionTypeIncompatibilityWithCurrentlyActivePDPContexts",
 		},
 		{
-			name: "Unknown code",
+			name:  "Unknown code",
 			cause: 142, // code for future use/reserved
-			want: "142",
+			want:  "142",
 		},
 	}
 	for _, tt := range tests {
