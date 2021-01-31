@@ -516,7 +516,7 @@ func TestIETypeStr(t *testing.T) {
 		name   string
 		ieType uint8
 		want   string
-	} {
+	}{
 		{
 			name:   "MMContextEPSSecurityContextQuadrupletsAndQuintuplets",
 			ieType: ie.MMContextEPSSecurityContextQuadrupletsAndQuintuplets,

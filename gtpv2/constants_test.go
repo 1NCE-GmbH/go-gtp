@@ -8,29 +8,29 @@ import "testing"
 
 func TestCauseStr(t *testing.T) {
 	tests := []struct {
-		name string
+		name  string
 		cause uint8
-		want string
-	} {
+		want  string
+	}{
 		{
-			name: "LocalDetach",
+			name:  "LocalDetach",
 			cause: CauseLocalDetach,
-			want: "LocalDetach",
+			want:  "LocalDetach",
 		},
 		{
-			name: "RequestAccepted",
+			name:  "RequestAccepted",
 			cause: CauseRequestAccepted,
-			want: "RequestAccepted",
+			want:  "RequestAccepted",
 		},
 		{
-			name: "InvalidOverallLengthOfTheTriggeredResponseMessageAndAPiggybackedInitialMessage",
+			name:  "InvalidOverallLengthOfTheTriggeredResponseMessageAndAPiggybackedInitialMessage",
 			cause: CauseInvalidOverallLengthOfTheTriggeredResponseMessageAndAPiggybackedInitialMessage,
-			want: "InvalidOverallLengthOfTheTriggeredResponseMessageAndAPiggybackedInitialMessage",
+			want:  "InvalidOverallLengthOfTheTriggeredResponseMessageAndAPiggybackedInitialMessage",
 		},
 		{
-			name: "Unknown code",
+			name:  "Unknown code",
 			cause: 15,
-			want: "15",
+			want:  "15",
 		},
 	}
 	for _, tt := range tests {

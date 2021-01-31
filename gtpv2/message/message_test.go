@@ -4,24 +4,24 @@ import "testing"
 
 func TestMsgTypeStr(t *testing.T) {
 	tests := []struct {
-		name string
+		name    string
 		msgType uint8
-		want string
-	} {
+		want    string
+	}{
 		{
-			name: "EchoRequest",
+			name:    "EchoRequest",
 			msgType: MsgTypeEchoRequest,
-			want: "EchoRequest",
+			want:    "EchoRequest",
 		},
 		{
-			name: "CreateIndirectDataForwardingTunnelResponse",
+			name:    "CreateIndirectDataForwardingTunnelResponse",
 			msgType: MsgTypeCreateIndirectDataForwardingTunnelResponse,
-			want: "CreateIndirectDataForwardingTunnelResponse",
+			want:    "CreateIndirectDataForwardingTunnelResponse",
 		},
 		{
-			name: "Unknown msg type",
+			name:    "Unknown msg type",
 			msgType: 199,
-			want: "199",
+			want:    "199",
 		},
 	}
 	for _, tt := range tests {
