@@ -4,8 +4,6 @@
 
 package gtpv1
 
-import "strconv"
-
 // Registered UDP ports
 const (
 	GTPCPort = ":2123"
@@ -81,129 +79,6 @@ const (
 	ResCauseRelocationFailureDueToNASMessageRedirection
 	// 234-255: for future use / reserved for prime.
 )
-
-// CauseStr returns string representation of GTPv1 cause code.
-func CauseStr(cause uint8) string {
-	causeStr := ""
-	switch cause {
-	case ReqCauseRequestIMSI:
-		causeStr = "RequestIMSI"
-	case ReqCauseRequestIMEI:
-		causeStr = "RequestIMEI"
-	case ReqCauseRequestIMSIAndIMEI:
-		causeStr = "RequestIMSIAndIMEI"
-	case ReqCauseNoIdentityNeeded:
-		causeStr = "NoIdentityNeeded"
-	case ReqCauseMSRefuses:
-		causeStr = "MSRefuses"
-	case ReqCauseMSIsNotGPRSResponding:
-		causeStr = "MSIsNotGPRSResponding"
-	case ReqCauseReactivationRequested:
-		causeStr = "ReactivationRequested"
-	case ReqCausePDPAddressInactivityTimerExpires:
-		causeStr = "PDPAddressInactivityTimerExpires"
-	case ReqCauseNetworkFailure:
-		causeStr = "NetworkFailure"
-	case ReqCauseQoSParameterMismatch:
-		causeStr = "QoSParameterMismatch"
-	// Skipped range 10-127: for future use / reserved for prime.
-	case ResCauseRequestAccepted:
-		causeStr = "RequestAccepted"
-	case ResCauseNewPDPTypeDueToNetworkPreference:
-		causeStr = "NewPDPTypeDueToNetworkPreference"
-	case ResCauseNewPDPTypeDueToSingleAddressBearerOnly:
-		causeStr = "NewPDPTypeDueToSingleAddressBearerOnly"
-	// Skipped range 131-191: for future use / reserved for prime.
-	case ResCauseNonExistent:
-		causeStr = "NonExistent"
-	case ResCauseInvalidMessageFormat:
-		causeStr = "InvalidMessageFormat"
-	case ResCauseIMSIIMEINotKnown:
-		causeStr = "IMSIIMEINotKnown"
-	case ResCauseMSIsGPRSDetached:
-		causeStr = "MSIsGPRSDetached"
-	case ResCauseMSIsNotGPRSResponding:
-		causeStr = "MSIsNotGPRSResponding"
-	case ResCauseMSRefuses:
-		causeStr = "MSRefuses"
-	case ResCauseVersionNotSupported:
-		causeStr = "VersionNotSupported"
-	case ResCauseNoResourcesAvailable:
-		causeStr = "NoResourcesAvailable"
-	case ResCauseServiceNotSupported:
-		causeStr = "ServiceNotSupported"
-	case ResCauseMandatoryIEIncorrect:
-		causeStr = "MandatoryIEIncorrect"
-	case ResCauseMandatoryIEMissing:
-		causeStr = "MandatoryIEMissing"
-	case ResCauseOptionalIEIncorrect:
-		causeStr = "OptionalIEIncorrect"
-	case ResCauseSystemFailure:
-		causeStr = "SystemFailure"
-	case ResCauseRoamingRestriction:
-		causeStr = "RoamingRestriction"
-	case ResCausePTMSISignatureMismatch:
-		causeStr = "PTMSISignatureMismatch"
-	case ResCauseGPRSConnectionSuspended:
-		causeStr = "GPRSConnectionSuspended"
-	case ResCauseAuthenticationFailure:
-		causeStr = "AuthenticationFailure"
-	case ResCauseUserAuthenticationFailed:
-		causeStr = "UserAuthenticationFailed"
-	case ResCauseContextNotFound:
-		causeStr = "ContextNotFound"
-	case ResCauseAllDynamicPDPAddressesAreOccupied:
-		causeStr = "AllDynamicPDPAddressesAreOccupied"
-	case ResCauseNoMemoryIsAvailable:
-		causeStr = "NoMemoryIsAvailable"
-	case ResCauseRelocationFailure:
-		causeStr = "RelocationFailure"
-	case ResCauseUnknownMandatoryExtensionHeader:
-		causeStr = "UnknownMandatoryExtensionHeader"
-	case ResCauseSemanticErrorInTheTFTOperation:
-		causeStr = "SemanticErrorInTheTFTOperation"
-	case ResCauseSyntacticErrorInTheTFTOperation:
-		causeStr = "SyntacticErrorInTheTFTOperation"
-	case ResCauseSemanticErrorsInPacketFilter:
-		causeStr = "SemanticErrorsInPacketFilter"
-	case ResCauseSyntacticErrorsInPacketFilter:
-		causeStr = "SyntacticErrorsInPacketFilter"
-	case ResCauseMissingOrUnknownAPN:
-		causeStr = "MissingOrUnknownAPN"
-	case ResCauseUnknownPDPAddressOrPDPType:
-		causeStr = "UnknownPDPAddressOrPDPType"
-	case ResCausePDPContextWithoutTFTAlreadyActivated:
-		causeStr = "PDPContextWithoutTFTAlreadyActivated"
-	case ResCauseAPNAccessDeniedNoSubscription:
-		causeStr = "APNAccessDeniedNoSubscription"
-	case ResCauseAPNRestrictionTypeIncompatibilityWithCurrentlyActivePDPContexts:
-		causeStr = "APNRestrictionTypeIncompatibilityWithCurrentlyActivePDPContexts"
-	case ResCauseMSMBMSCapabilitiesInsufficient:
-		causeStr = "MSMBMSCapabilitiesInsufficient"
-	case ResCauseInvalidCorrelationID:
-		causeStr = "InvalidCorrelationID"
-	case ResCauseMBMSBearerContextSuperseded:
-		causeStr = "MBMSBearerContextSuperseded"
-	case ResCauseBearerControlModeViolation:
-		causeStr = "BearerControlModeViolation"
-	case ResCauseCollisionWithNetworkInitiatedRequest:
-		causeStr = "CollisionWithNetworkInitiatedRequest"
-	case ResCauseAPNCongestion:
-		causeStr = "APNCongestion"
-	case ResCauseBearerHandlingNotSupported:
-		causeStr = "BearerHandlingNotSupported"
-	case ResCauseTargetAccessRestrictedForTheSubscriber:
-		causeStr = "TargetAccessRestrictedForTheSubscriber"
-	case ResCauseUEIsTemporarilyNotReachableDueToPowerSaving:
-		causeStr = "UEIsTemporarilyNotReachableDueToPowerSaving"
-	case ResCauseRelocationFailureDueToNASMessageRedirection:
-		causeStr = "RelocationFailureDueToNASMessageRedirection"
-	// Skipped range 234-255: for future use / reserved for prime.
-	default:
-		causeStr = strconv.FormatUint(uint64(cause), 10)
-	}
-	return causeStr
-}
 
 // SelectionMode definitions.
 const (
