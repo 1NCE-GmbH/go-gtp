@@ -8,12 +8,15 @@ import (
 	"context"
 	"crypto/rand"
 	"encoding/binary"
+	"errors"
+	"fmt"
 	"io"
 	"net"
+	"os"
+	"strings"
 	"sync"
 	"time"
 
-	"github.com/pkg/errors"
 	"github.com/vishvananda/netlink"
 	"github.com/wmnsk/go-gtp/gtpv1/ie"
 	"github.com/wmnsk/go-gtp/gtpv1/message"
@@ -40,10 +43,17 @@ type UPlaneConn struct {
 
 	relayMap map[uint32]*peer
 
+	errIndEnabled bool
+
 	// for Linux kernel GTP with netlink
-	kernGTPEnabled bool
-	errIndEnabled  bool
-	GTPLink        *netlink.GTP
+	KernelGTP
+}
+
+// KernelGTP consists of the Linux Kernel GTP-U related objects.
+type KernelGTP struct {
+	enabled  bool
+	connFile *os.File
+	Link     *netlink.GTP
 }
 
 // NewUPlaneConn creates a new UPlaneConn used for server. On client side, use DialUPlane instead.
@@ -78,7 +88,7 @@ func DialUPlane(ctx context.Context, laddr, raddr net.Addr) (*UPlaneConn, error)
 	// setup UDPConn first.
 	if u.pktConn == nil {
 		var err error
-		u.pktConn, err = net.ListenPacket(laddr.Network(), laddr.String())
+		u.pktConn, err = net.ListenPacket(u.laddr.Network(), u.laddr.String())
 		if err != nil {
 			return nil, err
 		}
@@ -126,7 +136,6 @@ func DialUPlane(ctx context.Context, laddr, raddr net.Addr) (*UPlaneConn, error)
 	go func() {
 		if err := u.serve(ctx); err != nil {
 			logf("fatal error on UPlaneConn %s: %s", u.LocalAddr(), err)
-			_ = u.Close()
 		}
 	}()
 
@@ -139,7 +148,9 @@ func DialUPlane(ctx context.Context, laddr, raddr net.Addr) (*UPlaneConn, error)
 func (u *UPlaneConn) ListenAndServe(ctx context.Context) error {
 	if u.pktConn == nil {
 		var err error
+		u.mu.Lock()
 		u.pktConn, err = net.ListenPacket(u.laddr.Network(), u.laddr.String())
+		u.mu.Unlock()
 		if err != nil {
 			return err
 		}
@@ -154,6 +165,27 @@ func (u *UPlaneConn) listenAndServe(ctx context.Context) error {
 }
 
 func (u *UPlaneConn) serve(ctx context.Context) error {
+	go func() {
+		select { // ctx is canceled or Close() is called
+		case <-ctx.Done():
+		case <-u.closed():
+		}
+
+		if u.KernelGTP.enabled {
+			if err := u.KernelGTP.connFile.Close(); err != nil {
+				logf("error closing GTPFile: %s", err)
+			}
+			if err := netlink.LinkDel(u.KernelGTP.Link); err != nil {
+				logf("error deleting GTPLink: %s", err)
+			}
+		}
+
+		// This doesn't finish for some reason when Kernel GTP is enabled.
+		if err := u.pktConn.Close(); err != nil {
+			logf("error closing the underlying conn: %s", err)
+		}
+	}()
+
 	buf := make([]byte, 1500)
 	for {
 		select {
@@ -167,54 +199,65 @@ func (u *UPlaneConn) serve(ctx context.Context) error {
 
 		n, raddr, err := u.pktConn.ReadFrom(buf)
 		if err != nil {
-			if err == io.EOF {
+			if errors.Is(err, io.EOF) {
 				return nil
 			}
-			return errors.Errorf("error reading from UPlaneConn %s: %s", u.LocalAddr(), err)
+			// TODO: Use net.ErrClosed instead (available from Go 1.16).
+			// https://github.com/golang/go/commit/e9ad52e46dee4b4f9c73ff44f44e1e234815800f
+			if strings.Contains(err.Error(), "use of closed network connection") {
+				return nil
+			}
+			return fmt.Errorf("error reading from UPlaneConn %s: %v", u.LocalAddr(), err)
 		}
 
-		// just forward T-PDU instead of passing it to reader if relayer is
-		// configured and the message type is T-PDU.
-		if len(u.relayMap) != 0 && buf[1] == message.MsgTypeTPDU {
-			// ignore if the packet size is smaller than minimum header size
-			if n < 11 {
-				continue
-			}
-
-			u.mu.Lock()
-			peer, ok := u.relayMap[binary.BigEndian.Uint32(buf[4:8])]
-			u.mu.Unlock()
-			if !ok { // pass message to handler if TEID is unknown
-				msg, err := message.Parse(buf[:n])
-				if err != nil {
-					continue
+		raw := make([]byte, n)
+		copy(raw, buf)
+		go func() {
+			// just forward T-PDU instead of passing it to reader if relayer is
+			// configured and the message type is T-PDU.
+			if len(u.relayMap) != 0 && raw[1] == message.MsgTypeTPDU {
+				// ignore if the packet size is smaller than minimum header size
+				if n < 11 {
+					return
 				}
 
-				if err := u.handleMessage(raddr, msg); err != nil {
+				u.mu.Lock()
+				peer, ok := u.relayMap[binary.BigEndian.Uint32(raw[4:8])]
+				u.mu.Unlock()
+				if !ok { // pass message to handler if TEID is unknown
+					msg, err := message.Parse(raw[:n])
+					if err != nil {
+						return
+					}
+
+					if err := u.handleMessage(raddr, msg); err != nil {
+						// should not stop serving with this error
+						logf("error handling message on UPlaneConn %s: %v", u.LocalAddr(), err)
+					}
+					return
+				}
+
+				// just use original packet not to get it slow.
+				binary.BigEndian.PutUint32(raw[4:8], peer.teid)
+				if _, err := peer.srcConn.WriteTo(raw[:n], peer.addr); err != nil {
 					// should not stop serving with this error
-					logf("error handling message on UPlaneConn %s: %v", u.LocalAddr(), err)
+					logf("error sending on UPlaneConn %s: %v", u.LocalAddr(), err)
 				}
-				continue
+				return
 			}
 
-			// just use original packet not to get it slow.
-			binary.BigEndian.PutUint32(buf[4:8], peer.teid)
-			if _, err := peer.srcConn.WriteTo(buf[:n], peer.addr); err != nil {
+			msg, err := message.Parse(raw[:n])
+			if err != nil {
+				logf("error parsing message on UPlaneConn %s: %v", u.LocalAddr(), err)
+				return
+			}
+
+			if err := u.handleMessage(raddr, msg); err != nil {
 				// should not stop serving with this error
-				logf("error sending on UPlaneConn %s: %s", u.LocalAddr(), err)
+				logf("error handling message on UPlaneConn %s: %v", u.LocalAddr(), err)
+				return
 			}
-			continue
-		}
-
-		msg, err := message.Parse(buf[:n])
-		if err != nil {
-			continue
-		}
-
-		if err := u.handleMessage(raddr, msg); err != nil {
-			// should not stop serving with this error
-			logf("error handling message on UPlaneConn %s: %s", u.LocalAddr(), err)
-		}
+		}()
 	}
 }
 
@@ -289,29 +332,7 @@ func (u *UPlaneConn) Close() error {
 	u.mu.Lock()
 	defer u.mu.Unlock()
 
-	u.msgHandlerMap = newMsgHandlerMap(
-		map[uint8]HandlerFunc{},
-	)
-	u.relayMap = nil
 	close(u.closeCh)
-
-	// u.pktConn.Close() may block for some reason in case kernel GTP-U is enabled...
-	if u.kernGTPEnabled {
-		if err := netlink.LinkDel(u.GTPLink); err != nil {
-			logf("error deleting GTPLink: %s", err)
-		}
-		go func() {
-			if err := u.pktConn.Close(); err != nil {
-				logf("error closing the underlying conn: %s", err)
-			}
-		}()
-
-		return nil
-	}
-
-	if err := u.pktConn.Close(); err != nil {
-		logf("error closing the underlying conn: %s", err)
-	}
 
 	return nil
 }
@@ -390,7 +411,7 @@ func (u *UPlaneConn) handleMessage(senderAddr net.Addr, msg message.Message) err
 	}
 
 	if err := handle(u, senderAddr, msg); err != nil {
-		return errors.Errorf("failed to handle %s: %v", msg.MessageTypeName(), err)
+		return fmt.Errorf("failed to handle %s: %v", msg.MessageTypeName(), err)
 	}
 
 	return nil

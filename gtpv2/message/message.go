@@ -7,10 +7,7 @@ Package message provides encoding/decoding feature of GTPv2 protocol.
 */
 package message
 
-import (
-	"fmt"
-	"strconv"
-)
+import "fmt"
 
 // Message Type definitions.
 const (
@@ -272,231 +269,6 @@ const (
 	_ // 248-255: Reserved for others
 )
 
-// MsgTypeStr converts gtpv2 message type ID to more readable string representation.
-func MsgTypeStr(msgType uint8) string {
-	msgTypeStr := ""
-	switch msgType {
-	case MsgTypeEchoRequest:
-		msgTypeStr = "EchoRequest"
-	case MsgTypeEchoResponse:
-		msgTypeStr = "EchoResponse"
-	case MsgTypeVersionNotSupportedIndication:
-		msgTypeStr = "VersionNotSupportedIndication"
-	case MsgTypeDirectTransferRequest:
-		msgTypeStr = "DirectTransferRequest"
-	case MsgTypeDirectTransferResponse:
-		msgTypeStr = "DirectTransferResponse"
-	case MsgTypeNotificationRequest:
-		msgTypeStr = "NotificationRequest"
-	case MsgTypeNotificationResponse:
-		msgTypeStr = "NotificationResponse"
-	// 8-16: Reserved for S101 interface
-	case MsgTypeRIMInformationTransfer:
-		msgTypeStr = "RIMInformationTransfer"
-	// 18-24: Reserved for S121 interface
-	case MsgTypeSRVCCPsToCsRequest:
-		msgTypeStr = "SRVCCPsToCsRequest"
-	case MsgTypeSRVCCPsToCsResponse:
-		msgTypeStr = "SRVCCPsToCsResponse"
-	case MsgTypeSRVCCPsToCsCompleteNotification:
-		msgTypeStr = "SRVCCPsToCsCompleteNotification"
-	case MsgTypeSRVCCPsToCsCompleteAcknowledge:
-		msgTypeStr = "SRVCCPsToCsCompleteAcknowledge"
-	case MsgTypeSRVCCPsToCsCancelNotification:
-		msgTypeStr = "SRVCCPsToCsCancelNotification"
-	case MsgTypeSRVCCPsToCsCancelAcknowledge:
-		msgTypeStr = "SRVCCPsToCsCancelAcknowledge"
-	case MsgTypeSRVCCCsToPsRequest:
-		msgTypeStr = "SRVCCCsToPsRequest"
-	case MsgTypeCreateSessionRequest:
-		msgTypeStr = "CreateSessionRequest"
-	case MsgTypeCreateSessionResponse:
-		msgTypeStr = "CreateSessionResponse"
-	case MsgTypeModifyBearerRequest:
-		msgTypeStr = "ModifyBearerRequest"
-	case MsgTypeModifyBearerResponse:
-		msgTypeStr = "ModifyBearerResponse"
-	case MsgTypeDeleteSessionRequest:
-		msgTypeStr = "ModifyBearerResponse"
-	case MsgTypeDeleteSessionResponse:
-		msgTypeStr = "DeleteSessionResponse"
-	case MsgTypeChangeNotificationRequest:
-		msgTypeStr = "ChangeNotificationRequest"
-	case MsgTypeChangeNotificationResponse:
-		msgTypeStr = "ChangeNotificationResponse"
-	case MsgTypeRemoteUEReportNotification:
-		msgTypeStr = "RemoteUEReportNotification"
-	case MsgTypeRemoteUEReportAcknowledge:
-		msgTypeStr = "RemoteUEReportAcknowledge"
-	// 42-63: Reserved for S4/S11, S5/S8 interfaces
-	case MsgTypeModifyBearerCommand:
-		msgTypeStr = "ModifyBearerCommand"
-	case MsgTypeModifyBearerFailureIndication:
-		msgTypeStr = "ModifyBearerFailureIndication"
-	case MsgTypeDeleteBearerCommand:
-		msgTypeStr = "DeleteBearerCommand"
-	case MsgTypeDeleteBearerFailureIndication:
-		msgTypeStr = "DeleteBearerFailureIndication"
-	case MsgTypeBearerResourceCommand:
-		msgTypeStr = "BearerResourceCommand"
-	case MsgTypeBearerResourceFailureIndication:
-		msgTypeStr = "BearerResourceFailureIndication"
-	case MsgTypeDownlinkDataNotificationFailureIndication:
-		msgTypeStr = "DownlinkDataNotificationFailureIndication"
-	case MsgTypeTraceSessionActivation:
-		msgTypeStr = "TraceSessionActivation"
-	case MsgTypeTraceSessionDeactivation:
-		msgTypeStr = "TraceSessionDeactivation"
-	case MsgTypeStopPagingIndication:
-		msgTypeStr = "StopPagingIndication"
-	// 74-94: Reserved for GTPv2 non-specific interfaces
-	case MsgTypeCreateBearerRequest:
-		msgTypeStr = "CreateBearerRequest"
-	case MsgTypeCreateBearerResponse:
-		msgTypeStr = "CreateBearerResponse"
-	case MsgTypeUpdateBearerRequest:
-		msgTypeStr = "UpdateBearerRequest"
-	case MsgTypeUpdateBearerResponse:
-		msgTypeStr = "UpdateBearerResponse"
-	case MsgTypeDeleteBearerRequest:
-		msgTypeStr = "DeleteBearerRequest"
-	case MsgTypeDeleteBearerResponse:
-		msgTypeStr = "DeleteBearerResponse"
-	case MsgTypeDeletePDNConnectionSetRequest:
-		msgTypeStr = "DeletePDNConnectionSetRequest"
-	case MsgTypeDeletePDNConnectionSetResponse:
-		msgTypeStr = "DeletePDNConnectionSetResponse"
-	case MsgTypePGWDownlinkTriggeringNotification:
-		msgTypeStr = "PGWDownlinkTriggeringNotification"
-	case MsgTypePGWDownlinkTriggeringAcknowledge:
-		msgTypeStr = "PGWDownlinkTriggeringAcknowledge"
-	// 105-127: Reserved for S5, S4/S11 interfaces
-	case MsgTypeIdentificationRequest:
-		msgTypeStr = "IdentificationRequest"
-	case MsgTypeIdentificationResponse:
-		msgTypeStr = "IdentificationResponse"
-	case MsgTypeContextRequest:
-		msgTypeStr = "ContextRequest"
-	case MsgTypeContextResponse:
-		msgTypeStr = "ContextResponse"
-	case MsgTypeContextAcknowledge:
-		msgTypeStr = "ContextAcknowledge"
-	case MsgTypeForwardRelocationRequest:
-		msgTypeStr = "ForwardRelocationRequest"
-	case MsgTypeForwardRelocationResponse:
-		msgTypeStr = "ForwardRelocationResponse"
-	case MsgTypeForwardRelocationCompleteNotification:
-		msgTypeStr = "ForwardRelocationCompleteNotification"
-	case MsgTypeForwardRelocationCompleteAcknowledge:
-		msgTypeStr = "ForwardRelocationCompleteAcknowledge"
-	case MsgTypeForwardAccessContextNotification:
-		msgTypeStr = "ForwardAccessContextNotification"
-	case MsgTypeForwardAccessContextAcknowledge:
-		msgTypeStr = "ForwardAccessContextAcknowledge"
-	case MsgTypeRelocationCancelRequest:
-		msgTypeStr = "RelocationCancelRequest"
-	case MsgTypeRelocationCancelResponse:
-		msgTypeStr = "RelocationCancelResponse"
-	case MsgTypeConfigurationTransferTunnel:
-		msgTypeStr = "ConfigurationTransferTunnel"
-	// 142-148: Reserved for S3/S10/S16 interfaces
-	case MsgTypeDetachNotification:
-		msgTypeStr = "DetachNotification"
-	case MsgTypeDetachAcknowledge:
-		msgTypeStr = "DetachAcknowledge"
-	case MsgTypeCSPagingIndication:
-		msgTypeStr = "CSPagingIndication"
-	case MsgTypeRANInformationRelay:
-		msgTypeStr = "RANInformationRelay"
-	case MsgTypeAlertMMENotification:
-		msgTypeStr = "AlertMMENotification"
-	case MsgTypeAlertMMEAcknowledge:
-		msgTypeStr = "AlertMMEAcknowledge"
-	case MsgTypeUEActivityNotification:
-		msgTypeStr = "UEActivityNotification"
-	case MsgTypeUEActivityAcknowledge:
-		msgTypeStr = "UEActivityAcknowledge"
-	case MsgTypeISRStatusIndication:
-		msgTypeStr = "ISRStatusIndication"
-	case MsgTypeUERegistrationQueryRequest:
-		msgTypeStr = "UERegistrationQueryRequest"
-	case MsgTypeUERegistrationQueryResponse:
-		msgTypeStr = "UERegistrationQueryResponse"
-	case MsgTypeCreateForwardingTunnelRequest:
-		msgTypeStr = "CreateForwardingTunnelRequest"
-	case MsgTypeCreateForwardingTunnelResponse:
-		msgTypeStr = "CreateForwardingTunnelResponse"
-	case MsgTypeSuspendNotification:
-		msgTypeStr = "SuspendNotification"
-	case MsgTypeSuspendAcknowledge:
-		msgTypeStr = "SuspendAcknowledge"
-	case MsgTypeResumeNotification:
-		msgTypeStr = "ResumeNotification"
-	case MsgTypeResumeAcknowledge:
-		msgTypeStr = "ResumeAcknowledge"
-	case MsgTypeCreateIndirectDataForwardingTunnelRequest:
-		msgTypeStr = "CreateIndirectDataForwardingTunnelRequest"
-	case MsgTypeCreateIndirectDataForwardingTunnelResponse:
-		msgTypeStr = "CreateIndirectDataForwardingTunnelResponse"
-	case MsgTypeDeleteIndirectDataForwardingTunnelRequest:
-		msgTypeStr = "DeleteIndirectDataForwardingTunnelRequest"
-	case MsgTypeDeleteIndirectDataForwardingTunnelResponse:
-		msgTypeStr = "DeleteIndirectDataForwardingTunnelResponse"
-	case MsgTypeReleaseAccessBearersRequest:
-		msgTypeStr = "ReleaseAccessBearersRequest"
-	case MsgTypeReleaseAccessBearersResponse:
-		msgTypeStr = "ReleaseAccessBearersResponse"
-		// 172-175: Reserved for S4/S11 interfaces
-	case MsgTypeDownlinkDataNotification:
-		msgTypeStr = "DownlinkDataNotification"
-	case MsgTypeDownlinkDataNotificationAcknowledge:
-		msgTypeStr = "DownlinkDataNotificationAcknowledge"
-	case MsgTypePGWRestartNotification:
-		msgTypeStr = "PGWRestartNotification"
-	case MsgTypePGWRestartNotificationAcknowledge:
-		msgTypeStr = "PGWRestartNotificationAcknowledge"
-		// 181-199: Reserved for S4 interface
-	case MsgTypeUpdatePDNConnectionSetRequest:
-		msgTypeStr = "UpdatePDNConnectionSetRequest"
-	case MsgTypeUpdatePDNConnectionSetResponse:
-		msgTypeStr = "UpdatePDNConnectionSetResponse"
-		// 202-210: Reserved for S5/S8 interfaces
-	case MsgTypeModifyAccessBearersRequest:
-		msgTypeStr = "ModifyAccessBearersRequest"
-	case MsgTypeModifyAccessBearersResponse:
-		msgTypeStr = "ModifyAccessBearersResponse"
-	// 213-230: Reserved for S11 interface
-	case MsgTypeMBMSSessionStartRequest:
-		msgTypeStr = "MBMSSessionStartRequest"
-	case MsgTypeMBMSSessionStartResponse:
-		msgTypeStr = "MBMSSessionStartResponse"
-	case MsgTypeMBMSSessionUpdateRequest:
-		msgTypeStr = "MBMSSessionUpdateRequest"
-	case MsgTypeMBMSSessionUpdateResponse:
-		msgTypeStr = "MBMSSessionUpdateResponse"
-	case MsgTypeMBMSSessionStopRequest:
-		msgTypeStr = "MBMSSessionStopRequest"
-	case MsgTypeMBMSSessionStopResponse:
-		msgTypeStr = "MBMSSessionStopResponse"
-	// 237-239: Reserved for Sm/Sn interface
-	case MsgTypeSRVCCCsToPsResponse:
-		msgTypeStr = "SRVCCCsToPsResponse"
-	case MsgTypeSRVCCCsToPsCompleteNotification:
-		msgTypeStr = "SRVCCCsToPsCompleteNotification"
-	case MsgTypeSRVCCCsToPsCompleteAcknowledge:
-		msgTypeStr = "SRVCCCsToPsCompleteAcknowledge"
-	case MsgTypeSRVCCCsToPsCancelNotification:
-		msgTypeStr = "SRVCCCsToPsCancelNotification"
-	case MsgTypeSRVCCCsToPsCancelAcknowledge:
-		msgTypeStr = "SRVCCCsToPsCancelAcknowledge"
-		// 245-247: Reserved for Sv interface
-		// 248-255: Reserved for others
-	default:
-		msgTypeStr = strconv.FormatUint(uint64(msgType), 10)
-	}
-	return msgTypeStr
-}
-
 // Message is an interface that defines GTPv2 message.
 type Message interface {
 	MarshalTo([]byte) error
@@ -597,6 +369,12 @@ func Parse(b []byte) (Message, error) {
 		m = &DetachNotification{}
 	case MsgTypeDetachAcknowledge:
 		m = &DetachAcknowledge{}
+	case MsgTypeDownlinkDataNotification:
+		m = &DownlinkDataNotification{}
+	case MsgTypeDownlinkDataNotificationAcknowledge:
+		m = &DownlinkDataNotificationAcknowledge{}
+	case MsgTypeDownlinkDataNotificationFailureIndication:
+		m = &DownlinkDataNotificationFailureIndication{}
 	default:
 		m = &Generic{}
 	}

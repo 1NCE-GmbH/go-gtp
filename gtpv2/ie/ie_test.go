@@ -97,8 +97,8 @@ func TestIEs(t *testing.T) {
 				ie.NewPCOContainer(gtpv2.ProtoIDIPCP, []byte{0x01, 0x00, 0x00, 0x10, 0x03, 0x06, 0x01, 0x01, 0x01, 0x01, 0x81, 0x06, 0x02, 0x02, 0x02, 0x02}),
 				ie.NewPCOContainer(gtpv2.ProtoIDPAP, []byte{0x01, 0x00, 0x00, 0x0c, 0x03, 0x66, 0x6f, 0x6f, 0x03, 0x62, 0x61, 0x72}),
 				ie.NewPCOContainer(gtpv2.ProtoIDCHAP, []byte{0x01, 0x00, 0x00, 0x0c, 0x04, 0xde, 0xad, 0xbe, 0xef, 0x66, 0x6f, 0x6f}),
-				ie.NewPCOContainer(gtpv2.ContIDMSSupportofNetworkRequestedBearerControlIndicator, nil),
-				ie.NewPCOContainer(gtpv2.ContIDIPaddressAllocationViaNASSignalling, nil),
+				ie.NewPCOContainer(gtpv2.ContIDMSSupportOfNetworkRequestedBearerControlIndicator, nil),
+				ie.NewPCOContainer(gtpv2.ContIDIPAddressAllocationViaNASSignalling, nil),
 				ie.NewPCOContainer(gtpv2.ContIDDNSServerIPv4AddressRequest, nil),
 				ie.NewPCOContainer(gtpv2.ContIDIPv4LinkMTURequest, nil),
 			),
@@ -447,9 +447,17 @@ func TestIEs(t *testing.T) {
 			ie.NewNodeFeatures(0x01),
 			[]byte{0x98, 0x00, 0x01, 0x00, 0x01},
 		}, {
+			"Throttling",
+			ie.NewThrottling(20*time.Hour, 80),
+			[]byte{0x9a, 0x00, 0x02, 0x00, 0x82, 0x50},
+		}, {
 			"AllocationRetensionPriority",
 			ie.NewAllocationRetensionPriority(1, 2, 1),
 			[]byte{0x9b, 0x00, 0x01, 0x00, 0x49},
+		}, {
+			"EPCTimer",
+			ie.NewEPCTimer(20 * time.Hour),
+			[]byte{0x9c, 0x00, 0x01, 0x00, 0x82},
 		}, {
 			"ULITimestamp",
 			ie.NewULITimestamp(time.Date(2019, time.January, 1, 0, 0, 0, 0, time.UTC)),
@@ -462,6 +470,14 @@ func TestIEs(t *testing.T) {
 			"RANNASCause",
 			ie.NewRANNASCause(gtpv2.ProtoTypeS1APCause, gtpv2.CauseTypeNAS, []byte{0x01}),
 			[]byte{0xac, 0x00, 0x02, 0x00, 0x12, 0x01},
+		}, {
+			"PagingAndServiceInformation",
+			ie.NewPagingAndServiceInformation(5, 0x01, 0xff),
+			[]byte{0xba, 0x00, 0x03, 0x00, 0x05, 0x01, 0x7f},
+		}, {
+			"IntegerNumber",
+			ie.NewIntegerNumber(2020),
+			[]byte{0xbb, 0x00, 0x02, 0x00, 0x07, 0xe4},
 		}, {
 			"PrivateExtension",
 			ie.NewPrivateExtension(10415, []byte{0xde, 0xad, 0xbe, 0xef}),
