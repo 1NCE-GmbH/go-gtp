@@ -334,7 +334,7 @@ func (i *IE) SetLength() {
 func (i *IE) String() string {
 	return fmt.Sprintf("{Type: %d (%s), Length: %d, Payload: %#v}",
 		i.Type,
-		IETypeStr(i.Type),
+		TypeStr(i.Type),
 		i.Length,
 		i.Payload,
 	)
@@ -377,8 +377,8 @@ func newUint32ValIE(t uint8, v uint32) *IE {
 	return i
 }
 
-// IETypeStr returns string representation of passed GTPv1 IE type
-func IETypeStr(ieType uint8) string {
+// TypeStr returns string representation of passed GTPv1 IE type
+func TypeStr(ieType uint8) string {
 	typeStr := ""
 	switch ieType {
 	// TV IE definitions

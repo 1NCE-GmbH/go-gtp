@@ -219,7 +219,7 @@ func TestIEs(t *testing.T) {
 	}
 }
 
-func TestIETypeStr(t *testing.T) {
+func TestTypeStr(t *testing.T) {
 	tests := []struct {
 		name   string
 		ieType uint8
@@ -248,8 +248,8 @@ func TestIETypeStr(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := ie.IETypeStr(tt.ieType); got != tt.want {
-				t.Errorf("IETypeStr() = %v, want %v", got, tt.want)
+			if got := ie.TypeStr(tt.ieType); got != tt.want {
+				t.Errorf("TypeStr() = %v, want %v", got, tt.want)
 			}
 		})
 	}

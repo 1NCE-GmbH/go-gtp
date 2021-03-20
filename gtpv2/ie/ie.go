@@ -417,7 +417,7 @@ func (i *IE) SetLength() {
 func (i *IE) String() string {
 	return fmt.Sprintf("{Type: %d (%s), Length: %d, Instance: %#x, Payload: %#v}",
 		i.Type,
-		IETypeStr(i.Type),
+		TypeStr(i.Type),
 		i.Length,
 		i.Instance(),
 		i.Payload,
@@ -571,8 +571,8 @@ func newGroupedIE(itype uint8, ies ...*IE) *IE {
 	return i
 }
 
-// IETypeStr returns string representation of passed GTPv2 IE type
-func IETypeStr(ieType uint8) string {
+// TypeStr returns string representation of passed GTPv2 IE type
+func TypeStr(ieType uint8) string {
 	typeStr := ""
 	switch ieType {
 	case IMSI:
