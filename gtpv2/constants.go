@@ -4,6 +4,8 @@
 
 package gtpv2
 
+import "strconv"
+
 // Fixes for the constants with wrong names (original ones are kept for compatibility).
 const (
 	ContIDMSSupportOfNetworkRequestedBearerControlIndicator uint16 = 5  // ContIDMSSupportofNetworkRequestedBearerControlIndicator
@@ -161,6 +163,172 @@ const (
 	CauseRequestRejectedDueToUECapability                                               uint8 = 127
 	CauseS1UPathFailure                                                                 uint8 = 128
 )
+
+// CauseStr returns string representation of GTPv2 cause code.
+func CauseStr(cause uint8) string {
+	causeStr := ""
+	switch cause {
+	case CauseLocalDetach:
+		causeStr = "LocalDetach"
+	case CauseCompleteDetach:
+		causeStr = "CompleteDetach"
+	case CauseRATChangedFrom3GPPToNon3GPP:
+		causeStr = "RATChangedFrom3GPPToNon3GPP"
+	case CauseISRDeactivation:
+		causeStr = "ISRDeactivation"
+	case CauseErrorIndicationReceivedFromRNCeNodeBS4SGSNMME:
+		causeStr = "ErrorIndicationReceivedFromRNCeNodeBS4SGSNMME"
+	case CauseIMSIDetachOnly:
+		causeStr = "IMSIDetachOnly"
+	case CauseReactivationRequested:
+		causeStr = "ReactivationRequested"
+	case CausePDNReconnectionToThisAPNDisallowed:
+		causeStr = "PDNReconnectionToThisAPNDisallowed"
+	case CauseAccessChangedFromNon3GPPTo3GPP:
+		causeStr = "AccessChangedFromNon3GPPTo3GPP"
+	case CausePDNConnectionInactivityTimerExpires:
+		causeStr = "PDNConnectionInactivityTimerExpires"
+	case CausePGWNotResponding:
+		causeStr = "PGWNotResponding"
+	case CauseNetworkFailure:
+		causeStr = "NetworkFailure"
+	case CauseQoSParameterMismatch:
+		causeStr = "QoSParameterMismatch"
+	case CauseRequestAccepted:
+		causeStr = "RequestAccepted"
+	case CauseRequestAcceptedPartially:
+		causeStr = "RequestAcceptedPartially"
+	case CauseNewPDNTypeDueToNetworkPreference:
+		causeStr = "NewPDNTypeDueToNetworkPreference"
+	case CauseNewPDNTypeDueToSingleAddressBearerOnly:
+		causeStr = "NewPDNTypeDueToSingleAddressBearerOnly"
+	case CauseContextNotFound:
+		causeStr = "ContextNotFound"
+	case CauseInvalidMessageFormat:
+		causeStr = "InvalidMessageFormat"
+	case CauseVersionNotSupportedByNextPeer:
+		causeStr = "VersionNotSupportedByNextPeer"
+	case CauseInvalidLength:
+		causeStr = "InvalidLength"
+	case CauseServiceNotSupported:
+		causeStr = "ServiceNotSupported"
+	case CauseMandatoryIEIncorrect:
+		causeStr = "MandatoryIEIncorrect"
+	case CauseMandatoryIEMissing:
+		causeStr = "MandatoryIEMissing"
+	case CauseSystemFailure:
+		causeStr = "SystemFailure"
+	case CauseNoResourcesAvailable:
+		causeStr = "NoResourcesAvailable"
+	case CauseSemanticErrorInTheTFTOperation:
+		causeStr = "SemanticErrorInTheTFTOperation"
+	case CauseSyntacticErrorInTheTFTOperation:
+		causeStr = "SyntacticErrorInTheTFTOperation"
+	case CauseSemanticErrorsInPacketFilters:
+		causeStr = "SemanticErrorsInPacketFilters"
+	case CauseSyntacticErrorsInPacketFilters:
+		causeStr = "SyntacticErrorsInPacketFilters"
+	case CauseMissingOrUnknownAPN:
+		causeStr = "MissingOrUnknownAPN"
+	case CauseGREKeyNotFound:
+		causeStr = "GREKeyNotFound"
+	case CauseRelocationFailure:
+		causeStr = "RelocationFailure"
+	case CauseDeniedInRAT:
+		causeStr = "DeniedInRAT"
+	case CausePreferredPDNTypeNotSupported:
+		causeStr = "PreferredPDNTypeNotSupported"
+	case CauseAllDynamicAddressesAreOccupied:
+		causeStr = "AllDynamicAddressesAreOccupied"
+	case CauseUEContextWithoutTFTAlreadyActivated:
+		causeStr = "UEContextWithoutTFTAlreadyActivated"
+	case CauseProtocolTypeNotSupported:
+		causeStr = "ProtocolTypeNotSupported"
+	case CauseUENotResponding:
+		causeStr = "UENotResponding"
+	case CauseUERefuses:
+		causeStr = "UERefuses"
+	case CauseServiceDenied:
+		causeStr = "ServiceDenied"
+	case CauseUnableToPageUE:
+		causeStr = "UnableToPageUE"
+	case CauseNoMemoryAvailable:
+		causeStr = "NoMemoryAvailable"
+	case CauseUserAuthenticationFailed:
+		causeStr = "UserAuthenticationFailed"
+	case CauseAPNAccessDeniedNoSubscription:
+		causeStr = "APNAccessDeniedNoSubscription"
+	case CauseRequestRejectedReasonNotSpecified:
+		causeStr = "RequestRejectedReasonNotSpecified"
+	case CausePTMSISignatureMismatch:
+		causeStr = "PTMSISignatureMismatch"
+	case CauseIMSIIMEINotKnown:
+		causeStr = "IMSIIMEINotKnown"
+	case CauseSemanticErrorInTheTADOperation:
+		causeStr = "SemanticErrorInTheTADOperation"
+	case CauseSyntacticErrorInTheTADOperation:
+		causeStr = "SyntacticErrorInTheTADOperation"
+	case CauseRemotePeerNotResponding:
+		causeStr = "RemotePeerNotResponding"
+	case CauseCollisionWithNetworkInitiatedRequest:
+		causeStr = "CollisionWithNetworkInitiatedRequest"
+	case CauseUnableToPageUEDueToSuspension:
+		causeStr = "UnableToPageUEDueToSuspension"
+	case CauseConditionalIEMissing:
+		causeStr = "ConditionalIEMissing"
+	case CauseAPNRestrictionTypeIncompatibleWithCurrentlyActivePDNConnection:
+		causeStr = "APNRestrictionTypeIncompatibleWithCurrentlyActivePDNConnection"
+	case CauseInvalidOverallLengthOfTheTriggeredResponseMessageAndAPiggybackedInitialMessage:
+		causeStr = "InvalidOverallLengthOfTheTriggeredResponseMessageAndAPiggybackedInitialMessage"
+	case CauseDataForwardingNotSupported:
+		causeStr = "DataForwardingNotSupported"
+	case CauseInvalidReplyFromRemotePeer:
+		causeStr = "InvalidReplyFromRemotePeer"
+	case CauseFallbackToGTPv1:
+		causeStr = "FallbackToGTPv1"
+	case CauseInvalidPeer:
+		causeStr = "InvalidPeer"
+	case CauseTemporarilyRejectedDueToHandoverTAURAUProcedureInProgress:
+		causeStr = "TemporarilyRejectedDueToHandoverTAURAUProcedureInProgress"
+	case CauseModificationsNotLimitedToS1UBearers:
+		causeStr = "ModificationsNotLimitedToS1UBearers"
+	case CauseRequestRejectedForAPMIPv6Reason:
+		causeStr = "RequestRejectedForAPMIPv6Reason"
+	case CauseAPNCongestion:
+		causeStr = "APNCongestion"
+	case CauseBearerHandlingNotSupported:
+		causeStr = "BearerHandlingNotSupported"
+	case CauseUEAlreadyReattached:
+		causeStr = "UEAlreadyReattached"
+	case CauseMultiplePDNConnectionsForAGivenAPNNotAllowed:
+		causeStr = "MultiplePDNConnectionsForAGivenAPNNotAllowed"
+	case CauseTargetAccessRestrictedForTheSubscriber:
+		causeStr = "TargetAccessRestrictedForTheSubscriber"
+	case CauseMMESGSNRefusesDueToVPLMNPolicy:
+		causeStr = "MMESGSNRefusesDueToVPLMNPolicy"
+	case CauseGTPCEntityCongestion:
+		causeStr = "GTPCEntityCongestion"
+	case CauseLateOverlappingRequest:
+		causeStr = "LateOverlappingRequest"
+	case CauseTimedOutRequest:
+		causeStr = "TimedOutRequest"
+	case CauseUEIsTemporarilyNotReachableDueToPowerSaving:
+		causeStr = "UEIsTemporarilyNotReachableDueToPowerSaving"
+	case CauseRelocationFailureDueToNASMessageRedirection:
+		causeStr = "RelocationFailureDueToNASMessageRedirection"
+	case CauseUENotAuthorisedByOCSOrExternalAAAServer:
+		causeStr = "UENotAuthorisedByOCSOrExternalAAAServer"
+	case CauseMultipleAccessesToAPDNConnectionNotAllowed:
+		causeStr = "MultipleAccessesToAPDNConnectionNotAllowed"
+	case CauseRequestRejectedDueToUECapability:
+		causeStr = "RequestRejectedDueToUECapability"
+	case CauseS1UPathFailure:
+		causeStr = "S1UPathFailure"
+	default:
+		causeStr = strconv.FormatUint(uint64(cause), 10)
+	}
+	return causeStr
+}
 
 // CSG Membership Indication definitions.
 const (

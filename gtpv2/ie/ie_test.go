@@ -541,3 +541,40 @@ func TestIEAddRemove(t *testing.T) {
 		t.Error(diff)
 	}
 }
+
+
+func TestTypeStr(t *testing.T) {
+	tests := []struct {
+		name   string
+		ieType uint8
+		want   string
+	}{
+		{
+			name:   "MMContextEPSSecurityContextQuadrupletsAndQuintuplets",
+			ieType: ie.MMContextEPSSecurityContextQuadrupletsAndQuintuplets,
+			want:   "MMContextEPSSecurityContextQuadrupletsAndQuintuplets",
+		},
+		{
+			name:   "CSGID",
+			ieType: ie.CSGID,
+			want:   "CSGID",
+		},
+		{
+			name:   "PrivateExtension",
+			ieType: ie.PrivateExtension,
+			want:   "PrivateExtension",
+		},
+		{
+			name:   "Unknown code",
+			ieType: 239,
+			want:   "239",
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := ie.TypeStr(tt.ieType); got != tt.want {
+				t.Errorf("TypeStr() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}

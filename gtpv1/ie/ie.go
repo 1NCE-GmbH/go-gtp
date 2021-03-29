@@ -10,6 +10,7 @@ package ie
 import (
 	"encoding/binary"
 	"fmt"
+	"strconv"
 )
 
 // TV IE definitions.
@@ -331,8 +332,9 @@ func (i *IE) SetLength() {
 
 // String returns the GTPv1 IE values in human readable format.
 func (i *IE) String() string {
-	return fmt.Sprintf("{Type: %d, Length: %d, Payload: %#v}",
+	return fmt.Sprintf("{Type: %d (%s), Length: %d, Payload: %#v}",
 		i.Type,
+		TypeStr(i.Type),
 		i.Length,
 		i.Payload,
 	)
@@ -373,4 +375,266 @@ func newUint32ValIE(t uint8, v uint32) *IE {
 	i := New(t, make([]byte, 4))
 	binary.BigEndian.PutUint32(i.Payload, v)
 	return i
+}
+
+// TypeStr returns string representation of passed GTPv1 IE type
+func TypeStr(ieType uint8) string {
+	typeStr := ""
+	switch ieType {
+	// TV IE definitions
+	case Cause:
+		typeStr = "Cause"
+	case IMSI:
+		typeStr = "IMSI"
+	case RouteingAreaIdentity:
+		typeStr = "RouteingAreaIdentity"
+	case TemporaryLogicalLinkIdentity:
+		typeStr = "TemporaryLogicalLinkIdentity"
+	case PacketTMSI:
+		typeStr = "PacketTMSI"
+	case ReorderingRequired:
+		typeStr = "ReorderingRequired"
+	case AuthenticationTriplet:
+		typeStr = "AuthenticationTriplet"
+	case MAPCause:
+		typeStr = "MAPCause"
+	case PTMSISignature:
+		typeStr = "PTMSISignature"
+	case MSValidated:
+		typeStr = "MSValidated"
+	case Recovery:
+		typeStr = "Recovery"
+	case SelectionMode:
+		typeStr = "SelectionMode"
+	case TEIDDataI:
+		typeStr = "TEIDDataI"
+	case TEIDCPlane:
+		typeStr = "TEIDCPlane"
+	case TEIDDataII:
+		typeStr = "TEIDDataII"
+	case TeardownInd:
+		typeStr = "TeardownInd"
+	case NSAPI:
+		typeStr = "NSAPI"
+	case RANAPCause:
+		typeStr = "RANAPCause"
+	case RABContext:
+		typeStr = "RABContext"
+	case RadioPrioritySMS:
+		typeStr = "RadioPrioritySMS"
+	case RadioPriority:
+		typeStr = "RadioPriority"
+	case PacketFlowID:
+		typeStr = "PacketFlowID"
+	case ChargingCharacteristics:
+		typeStr = "ChargingCharacteristics"
+	case TraceReference:
+		typeStr = "TraceReference"
+	case TraceType:
+		typeStr = "TraceType"
+	case MSNotReachableReason:
+		typeStr = "MSNotReachableReason"
+	// TLV IE definitions.
+	case ChargingID:
+		typeStr = "ChargingID"
+	case EndUserAddress:
+		typeStr = "EndUserAddress"
+	case MMContext:
+		typeStr = "MMContext"
+	case PDPContext:
+		typeStr = "PDPContext"
+	case AccessPointName:
+		typeStr = "AccessPointName"
+	case ProtocolConfigurationOptions:
+		typeStr = "ProtocolConfigurationOptions"
+	case GSNAddress:
+		typeStr = "GSNAddress"
+	case MSISDN:
+		typeStr = "MSISDN"
+	case QoSProfile:
+		typeStr = "QoSProfile"
+	case AuthenticationQuintuplet:
+		typeStr = "AuthenticationQuintuplet"
+	case TrafficFlowTemplate:
+		typeStr = "TrafficFlowTemplate"
+	case TargetIdentification:
+		typeStr = "TargetIdentification"
+	case UTRANTransparentContainer:
+		typeStr = "UTRANTransparentContainer"
+	case RABSetupInformation:
+		typeStr = "RABSetupInformation"
+	case ExtensionHeaderTypeList:
+		typeStr = "ExtensionHeaderTypeList"
+	case TriggerID:
+		typeStr = "TriggerID"
+	case OMCIdentity:
+		typeStr = "OMCIdentity"
+	case RANTransparentContainer:
+		typeStr = "RANTransparentContainer"
+	case PDPContextPrioritization:
+		typeStr = "PDPContextPrioritization"
+	case AdditionalRABSetupInformation:
+		typeStr = "AdditionalRABSetupInformation"
+	case SGSNNumber:
+		typeStr = "SGSNNumber"
+	case CommonFlags:
+		typeStr = "CommonFlags"
+	case APNRestriction:
+		typeStr = "APNRestriction"
+	case RadioPriorityLCS:
+		typeStr = "RadioPriorityLCS"
+	case RATType:
+		typeStr = "RATType"
+	case UserLocationInformation:
+		typeStr = "UserLocationInformation"
+	case MSTimeZone:
+		typeStr = "MSTimeZone"
+	case IMEISV:
+		typeStr = "IMEISV"
+	case CAMELChargingInformationContainer:
+		typeStr = "CAMELChargingInformationContainer"
+	case MBMSUEContext:
+		typeStr = "MBMSUEContext"
+	case TemporaryMobileGroupIdentity:
+		typeStr = "TemporaryMobileGroupIdentity"
+	case RIMRoutingAddress:
+		typeStr = "RIMRoutingAddress"
+	case MBMSProtocolConfigurationOptions:
+		typeStr = "MBMSProtocolConfigurationOptions"
+	case MBMSServiceArea:
+		typeStr = "MBMSServiceArea"
+	case SourceRNCPDCPContextInfo:
+		typeStr = "SourceRNCPDCPContextInfo"
+	case AdditionalTraceInfo:
+		typeStr = "AdditionalTraceInfo"
+	case HopCounter:
+		typeStr = "HopCounter"
+	case SelectedPLMNID:
+		typeStr = "SelectedPLMNID"
+	case MBMSSessionIdentifier:
+		typeStr = "MBMSSessionIdentifier"
+	case MBMS2G3GIndicator:
+		typeStr = "MBMS2G3GIndicator"
+	case EnhancedNSAPI:
+		typeStr = "EnhancedNSAPI"
+	case MBMSSessionDuration:
+		typeStr = "MBMSSessionDuration"
+	case AdditionalMBMSTraceInfo:
+		typeStr = "AdditionalMBMSTraceInfo"
+	case MBMSSessionRepetitionNumber:
+		typeStr = "MBMSSessionRepetitionNumber"
+	case MBMSTimeToDataTransfer:
+		typeStr = "MBMSTimeToDataTransfer"
+	case BSSContainer:
+		typeStr = "BSSContainer"
+	case CellIdentification:
+		typeStr = "CellIdentification"
+	case PDUNumbers:
+		typeStr = "PDUNumbers"
+	case BSSGPCause:
+		typeStr = "BSSGPCause"
+	case RequiredMBMSBearerCapabilities:
+		typeStr = "RequiredMBMSBearerCapabilities"
+	case RIMRoutingAddressDiscriminator:
+		typeStr = "RIMRoutingAddressDiscriminator"
+	case ListOfSetupPFCs:
+		typeStr = "ListOfSetupPFCs"
+	case PSHandoverXIDParameters:
+		typeStr = "PSHandoverXIDParameters"
+	case MSInfoChangeReportingAction:
+		typeStr = "MSInfoChangeReportingAction"
+	case DirectTunnelFlags:
+		typeStr = "DirectTunnelFlags"
+	case CorrelationID:
+		typeStr = "CorrelationID"
+	case BearerControlMode:
+		typeStr = "BearerControlMode"
+	case MBMSFlowIdentifier:
+		typeStr = "MBMSFlowIdentifier"
+	case MBMSIPMulticastDistribution:
+		typeStr = "MBMSIPMulticastDistribution"
+	case MBMSDistributionAcknowledgement:
+		typeStr = "MBMSDistributionAcknowledgement"
+	case ReliableInterRATHandoverInfo:
+		typeStr = "ReliableInterRATHandoverInfo"
+	case RFSPIndex:
+		typeStr = "RFSPIndex"
+	case FullyQualifiedDomainName:
+		typeStr = "FullyQualifiedDomainName"
+	case EvolvedAllocationRetentionPriorityI:
+		typeStr = "EvolvedAllocationRetentionPriorityI"
+	case EvolvedAllocationRetentionPriorityII:
+		typeStr = "EvolvedAllocationRetentionPriorityII"
+	case ExtendedCommonFlags:
+		typeStr = "ExtendedCommonFlags"
+	case UserCSGInformation:
+		typeStr = "UserCSGInformation"
+	case CSGInformationReportingAction:
+		typeStr = "CSGInformationReportingAction"
+	case CSGID:
+		typeStr = "CSGID"
+	case CSGMembershipIndication:
+		typeStr = "CSGMembershipIndication"
+	case AggregateMaximumBitRate:
+		typeStr = "AggregateMaximumBitRate"
+	case UENetworkCapability:
+		typeStr = "UENetworkCapability"
+	case UEAMBR:
+		typeStr = "UEAMBR"
+	case APNAMBRWithNSAPI:
+		typeStr = "APNAMBRWithNSAPI"
+	case GGSNBackOffTime:
+		typeStr = "GGSNBackOffTime"
+	case SignallingPriorityIndication:
+		typeStr = "SignallingPriorityIndication"
+	case SignallingPriorityIndicationWithNSAPI:
+		typeStr = "SignallingPriorityIndicationWithNSAPI"
+	case HigherBitratesThan16MbpsFlag:
+		typeStr = "HigherBitratesThan16MbpsFlag"
+	case AdditionalMMContextForSRVCC:
+		typeStr = "AdditionalMMContextForSRVCC"
+	case AdditionalFlagsForSRVCC:
+		typeStr = "AdditionalFlagsForSRVCC"
+	case STNSR:
+		typeStr = "STNSR"
+	case CMSISDN:
+		typeStr = "CMSISDN"
+	case ExtendedRANAPCause:
+		typeStr = "ExtendedRANAPCause"
+	case ENodeBID:
+		typeStr = "ENodeBID"
+	case SelectionModeWithNSAPI:
+		typeStr = "SelectionModeWithNSAPI"
+	case ULITimestamp:
+		typeStr = "ULITimestamp"
+	case LHNIDWithNSAPI:
+		typeStr = "LHNIDWithNSAPI"
+	case CNOperatorSelectionEntity:
+		typeStr = "CNOperatorSelectionEntity"
+	case UEUsageType:
+		typeStr = "UEUsageType"
+	case ExtendedCommonFlagsII:
+		typeStr = "ExtendedCommonFlagsII"
+	case NodeIdentifier:
+		typeStr = "NodeIdentifier"
+	case CIoTOptimizationsSupportIndication:
+		typeStr = "CIoTOptimizationsSupportIndication"
+	case SCEFPDNConnection:
+		typeStr = "SCEFPDNConnection"
+	case IOVUpdatesCounter:
+		typeStr = "IOVUpdatesCounter"
+	case MappedUEUsageType:
+		typeStr = "MappedUEUsageType"
+	case UPFunctionSelectionIndicationFlags:
+		typeStr = "UPFunctionSelectionIndicationFlags"
+	case SpecialIETypeForIETypeExtension:
+		typeStr = "SpecialIETypeForIETypeExtension"
+	case ChargingGatewayAddress:
+		typeStr = "ChargingGatewayAddress"
+	case PrivateExtension:
+		typeStr = "PrivateExtension"
+	default:
+		typeStr = strconv.FormatUint(uint64(ieType), 10)
+	}
+	return typeStr
 }

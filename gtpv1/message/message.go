@@ -7,6 +7,8 @@ Package message provides encoding/decoding feature of GTPv1 protocol.
 */
 package message
 
+import "strconv"
+
 // Message Type definitions.
 const (
 	_ uint8 = iota
@@ -74,6 +76,88 @@ const (
 	MsgTypeDataRecordTransferResponse uint8 = 241
 	MsgTypeTPDU                       uint8 = 255
 )
+
+// MsgTypeStr converts gtpv1 message type ID to more readable string representation
+func MsgTypeStr(msgType uint8) string {
+	msgTypeStr := ""
+	switch msgType {
+	case MsgTypeEchoRequest:
+		msgTypeStr = "EchoRequest"
+	case MsgTypeEchoResponse:
+		msgTypeStr = "EchoResponse"
+	case MsgTypeVersionNotSupported:
+		msgTypeStr = "VersionNotSupported"
+	case MsgTypeNodeAliveRequest:
+		msgTypeStr = "NodeAliveRequest"
+	case MsgTypeNodeAliveResponse:
+		msgTypeStr = "NodeAliveResponse"
+	case MsgTypeRedirectionRequest:
+		msgTypeStr = "RedirectionRequest"
+	case MsgTypeRedirectionResponse:
+		msgTypeStr = "RedirectionResponse"
+	case MsgTypeCreatePDPContextRequest:
+		msgTypeStr = "CreatePDPContextRequest"
+	case MsgTypeCreatePDPContextResponse:
+		msgTypeStr = "CreatePDPContextResponse"
+	case MsgTypeUpdatePDPContextRequest:
+		msgTypeStr = "UpdatePDPContextRequest"
+	case MsgTypeUpdatePDPContextResponse:
+		msgTypeStr = "UpdatePDPContextResponse"
+	case MsgTypeDeletePDPContextRequest:
+		msgTypeStr = "DeletePDPContextRequest"
+	case MsgTypeDeletePDPContextResponse:
+		msgTypeStr = "DeletePDPContextResponse"
+	case MsgTypeCreateAAPDPContextRequest:
+		msgTypeStr = "CreateAAPDPContextRequest"
+	case MsgTypeCreateAAPDPContextResponse:
+		msgTypeStr = "CreateAAPDPContextResponse"
+	case MsgTypeDeleteAAPDPContextRequest:
+		msgTypeStr = "DeleteAAPDPContextRequest"
+	case MsgTypeDeleteAAPDPContextResponse:
+		msgTypeStr = "DeleteAAPDPContextResponse"
+	case MsgTypeErrorIndication:
+		msgTypeStr = "ErrorIndication"
+	case MsgTypePDUNotificationRequest:
+		msgTypeStr = "PDUNotificationRequest"
+	case MsgTypePDUNotificationResponse:
+		msgTypeStr = "PDUNotificationResponse"
+	case MsgTypePDUNotificationRejectRequest:
+		msgTypeStr = "PDUNotificationRejectRequest"
+	case MsgTypePDUNotificationRejectResponse:
+		msgTypeStr = "PDUNotificationRejectResponse"
+	case MsgTypeSendRoutingInfoRequest:
+		msgTypeStr = "SendRoutingInfoRequest"
+	case MsgTypeSendRoutingInfoResponse:
+		msgTypeStr = "SendRoutingInfoResponse"
+	case MsgTypeFailureReportRequest:
+		msgTypeStr = "FailureReportRequest"
+	case MsgTypeFailureReportResponse:
+		msgTypeStr = "FailureReportResponse"
+	case MsgTypeNoteMSPresentRequest:
+		msgTypeStr = "NoteMSPresentRequest"
+	case MsgTypeNoteMSPresentResponse:
+		msgTypeStr = "NoteMSPresentResponse"
+	case MsgTypeIdentificationRequest:
+		msgTypeStr = "IdentificationRequest"
+	case MsgTypeIdentificationResponse:
+		msgTypeStr = "IdentificationResponse"
+	case MsgTypeSGSNContextRequest:
+		msgTypeStr = "SGSNContextRequest"
+	case MsgTypeSGSNContextResponse:
+		msgTypeStr = "SGSNContextResponse"
+	case MsgTypeSGSNContextAcknowledge:
+		msgTypeStr = "SGSNContextAcknowledge"
+	case MsgTypeDataRecordTransferRequest:
+		msgTypeStr = "DataRecordTransferRequest"
+	case MsgTypeDataRecordTransferResponse:
+		msgTypeStr = "DataRecordTransferResponse"
+	case MsgTypeTPDU:
+		msgTypeStr = "TPDU"
+	default:
+		msgTypeStr = strconv.FormatUint(uint64(msgType), 10)
+	}
+	return msgTypeStr
+}
 
 // Message is an interface that defines Message message.
 type Message interface {
